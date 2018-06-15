@@ -22,7 +22,6 @@
 |toggle            | Android | show or hide dialog                     |
 |show              | Android | show dialog                             |
 |hide              | Android | hide dialog                             |
-|select            | Android | select a row                            |
 |isDialogAlertShow | Android | get status of dialog, return a boolean  |
 
 
