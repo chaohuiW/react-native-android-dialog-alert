@@ -16,38 +16,23 @@ const options = {
   callback: () => {}
 }
 export default {
-  init(params){
+  alert(params){
     const opt = {
       ...options,
       ...params
     };
-    Dialog._init(opt)
+    Dialog._alert(opt)
     //there are no `removeListener` for NativeAppEventEmitter & DeviceEventEmitter
     this.listener && this.listener.remove()
     this.listener = NativeAppEventEmitter.addListener('dialogEvent', event => {
       opt.callback(event['type'])
     })
   },
-  
-  show(){
-    Dialog.show()
-  },
 
   hide(){
     Dialog.hide()
   },
-
-  toggle(){
-    this.isPickerShow(show => {
-      if(show){
-        this.hide()
-      }
-      else{
-        this.show()
-      }
-    })
-  },
-
+  
   isDialogAlertShow(fn){
     Dialog.isPickerShow((err, status) => {
       let returnValue = null

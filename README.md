@@ -18,9 +18,7 @@
 
 |Key | Support | Description |
 | --- | ---- | ----------- |
-|init              | Android | init and pass parameters to dialog      |
-|toggle            | Android | show or hide dialog                     |
-|show              | Android | show dialog                             |
+|alert             | Android | alert and pass parameters to dialog     |
 |hide              | Android | hide dialog                             |
 |isDialogAlertShow | Android | get status of dialog, return a boolean  |
 
@@ -44,11 +42,10 @@
 ```javascript
 import DialogAlert from 'react-native-android-dialog-alert';
 
-DialogAlert.init({
+DialogAlert.alert({
   callback: res => {
     console.log(res);
   }
 });
-DialogAlert.show();
 	
 ```
