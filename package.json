@@ -1,6 +1,6 @@
 {
   "name": "react-native-android-dialog-alert",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Android Native Dialog",
   "main": "index.js",
   "scripts": {
