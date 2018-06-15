@@ -49,6 +49,6 @@ DialogAlert.init({
     console.log(res);
   }
 });
-Picker.show();
+DialogAlert.show();
 	
 ```
