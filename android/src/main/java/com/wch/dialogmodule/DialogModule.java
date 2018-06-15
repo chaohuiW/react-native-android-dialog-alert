@@ -95,7 +95,7 @@ public class DialogModule extends ReactContextBaseJavaModule implements Lifecycl
 //  }
 
   @ReactMethod
-  public void _init(final ReadableMap options) {
+  public void _alert(final ReadableMap options) {
     Activity activity = getCurrentActivity();
     if (activity != null){
       View view = activity.getLayoutInflater().inflate(R.layout.dialog_view, null);
@@ -192,6 +192,8 @@ public class DialogModule extends ReactContextBaseJavaModule implements Lifecycl
         dialog.dismiss();
         dialog.setContentView(view);
       }
+
+      show();
     }
   }
 
