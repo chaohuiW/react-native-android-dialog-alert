@@ -56,46 +56,88 @@ public class DialogModule extends ReactContextBaseJavaModule implements Lifecycl
   }
 
   // 一个带ReactMethod的方法并传入ReadableMap ReadableArray
-//  @ReactMethod
-//  public void showDialog(ReadableMap object, ReadableArray btnsArray, final Callback callback) {
-//
-//    Activity activity = getCurrentActivity();
-//    final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-//
-//    builder.setTitle(object.getString("title"))
-//      .setMessage(object.getString("message"));
-//
-//    if (btnsArray.size() > 1) {
-//      final String btnItem_1 = btnsArray.getString(0);
-//      builder.setNegativeButton(btnItem_1, new DialogInterface.OnClickListener(){
-//        public void onClick(DialogInterface dialog, int id) {
-//          dialog.dismiss();
-//          callback.invoke(btnItem_1);
-//        }
-//      });
-//    } else {
-//      builder.setPositiveButton("取消", new DialogInterface.OnClickListener(){
-//        public void onClick(DialogInterface dialog, int id) {
-//          dialog.dismiss();
-//          callback.invoke();
-//        }
-//      });
-//    }
-//    if (btnsArray.size() == 2) {
-//      final String btnItem_2 = btnsArray.getString(1);
-//      builder.setPositiveButton(btnItem_2, new DialogInterface.OnClickListener() {
-//        public void onClick(DialogInterface dialog, int id) {
-//          dialog.dismiss();
-//          callback.invoke(btnItem_2);
-//        }
-//      });
-//    }
-//
-//    builder.create().show();
-//  }
-
   @ReactMethod
   public void _alert(final ReadableMap options) {
+    Activity activity = getCurrentActivity();
+    if (activity != null){
+      View view = activity.getLayoutInflater().inflate(R.layout.dialog_view, null);
+      TextView dialogTitle = view.findViewById(R.id.dialog_title);
+      TextView dialogContent = view.findViewById(R.id.dialog_content);
+      TextView dialogLeftBtn = view.findViewById(R.id.dialog_left_btn);
+      View dialogMiddleLine = view.findViewById(R.id.dialog_middle_line);
+      TextView dialogRightBtn = view.findViewById(R.id.dialog_right_btn);
+
+      // 设置Title
+      if (options.hasKey(DIALOG_TITLE)) {
+        String optionsTitle = options.getString(DIALOG_TITLE);
+        if (optionsTitle.isEmpty()) {
+          dialogTitle.setVisibility(View.GONE);
+        } else {
+          dialogTitle.setVisibility(View.VISIBLE);
+          dialogTitle.setText(optionsTitle);
+        }
+      } else {
+        dialogTitle.setVisibility(View.VISIBLE);
+        dialogTitle.setText("提示");
+      }
+
+      // 设置Title字体样式
+      if (options.hasKey(DIALOG_TITLE_TEXT_COLOR)) {
+        ReadableArray array = options.getArray(DIALOG_TITLE_TEXT_COLOR);
+        int[] colors = getColor(array);
+        dialogTitle.setTextColor(argb(colors[3], colors[0], colors[1], colors[2]));
+      }
+
+      String optionsContent = options.getString(DIALOG_CONTENT);
+      dialogContent.setText(optionsContent);
+
+      // 设置Content字体样式
+      if (options.hasKey(DIALOG_CONTENT_TEXT_COLOR)) {
+        ReadableArray array = options.getArray(DIALOG_CONTENT_TEXT_COLOR);
+        int[] colors = getColor(array);
+        dialogContent.setTextColor(argb(colors[3], colors[0], colors[1], colors[2]));
+      }
+
+      /***************** 设置Alert底部按钮 ******************/
+      if (options.hasKey(DIALOG_BUTTON)) {
+        String button = options.getString(DIALOG_BUTTON);
+        dialogLeftBtn.setText(button);
+      } else {
+        dialogLeftBtn.setText("确定");
+      }
+      dialogMiddleLine.setVisibility(View.GONE);
+      dialogRightBtn.setVisibility(View.GONE);
+
+      /***************** 设置Alert底部按钮字体颜色 ******************/
+      if (options.hasKey(DIALOG_BUTTON_TEXT_COLOR)) {
+        ReadableArray array = options.getArray(DIALOG_BUTTON_TEXT_COLOR);
+        int[] colors = getColor(array);
+        dialogLeftBtn.setTextColor(argb(colors[3], colors[0], colors[1], colors[2]));
+      }
+
+      /***************** 设置Alert底部按钮事件 ******************/
+      dialogLeftBtn.setOnClickListener(new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+          commonEvent(EVENT_KEY_LEFT);
+          hide();
+        }
+      });
+      
+      if (dialog == null){
+        dialog = new Dialog(activity, R.style.dialog);
+        dialog.setContentView(view);
+      } else {
+        dialog.dismiss();
+        dialog.setContentView(view);
+      }
+
+      show();
+    }
+  }
+
+  @ReactMethod
+  public void _confirm(final ReadableMap options) {
     Activity activity = getCurrentActivity();
     if (activity != null){
       View view = activity.getLayoutInflater().inflate(R.layout.dialog_view, null);
@@ -139,28 +181,15 @@ public class DialogModule extends ReactContextBaseJavaModule implements Lifecycl
 
       if (options.hasKey(DIALOG_BUTTON)) {
         ReadableArray button = options.getArray(DIALOG_BUTTON);
-        if (button.size() == 1) {
-          dialogLeftBtn.setText(button.getString(0));
-          dialogMiddleLine.setVisibility(View.GONE);
-          dialogRightBtn.setVisibility(View.GONE);
-        } else if (button.size() == 2) {
+        if (button.size() == 2) {
           dialogLeftBtn.setText(button.getString(0));
           dialogRightBtn.setText(button.getString(1));
         }
-      } else {
-        dialogLeftBtn.setText("确定");
-        dialogMiddleLine.setVisibility(View.GONE);
-        dialogRightBtn.setVisibility(View.GONE);
       }
 
       if (options.hasKey(DIALOG_BUTTON_TEXT_COLOR)) {
         ReadableArray buttonTextColor = options.getArray(DIALOG_BUTTON_TEXT_COLOR);
-        if (buttonTextColor.size() == 1) {
-          ReadableArray array = buttonTextColor.getArray(0);
-          int[] colors = getColor(array);
-          dialogLeftBtn.setTextColor(argb(colors[3], colors[0], colors[1], colors[2]));
-
-        } else if (buttonTextColor.size() == 2) {
+        if (buttonTextColor.size() == 2) {
           ReadableArray array_L = buttonTextColor.getArray(0);
           int[] colors_L = getColor(array_L);
           dialogLeftBtn.setTextColor(argb(colors_L[3], colors_L[0], colors_L[1], colors_L[2]));
